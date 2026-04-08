@@ -10,9 +10,7 @@ const config: Config = {
   testMatch: ['<rootDir>/tests/**/*.test.ts', '<rootDir>/tests/**/*.test.tsx'],
   globals: {
     'ts-jest': {
-      tsconfig: {
-        jsx: 'react-jsx',
-      },
+      tsconfig: './tsconfig.test.json',
     },
   },
 }
