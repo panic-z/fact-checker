@@ -67,12 +67,12 @@ export function parseTimedText(xml: string): TranscriptSegment[] {
 
   while ((match = regex.exec(xml)) !== null) {
     const text = match[3]
+      .replace(/<[^>]+>/g, '') // strip inner tags before entity decoding
       .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'")
-      .replace(/<[^>]+>/g, '')
       .trim()
 
     if (text) {
