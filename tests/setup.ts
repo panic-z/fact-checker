@@ -14,6 +14,7 @@ Object.assign(global, { TextEncoder, TextDecoder })
 
 // Mock chrome.storage
 const store: Record<string, unknown> = {}
+const sessionStore: Record<string, unknown> = {}
 
 global.chrome = {
   storage: {
@@ -38,9 +39,24 @@ global.chrome = {
       }),
     },
     session: {
-      get: jest.fn(() => Promise.resolve({})),
-      set: jest.fn(() => Promise.resolve()),
-      remove: jest.fn(() => Promise.resolve()),
+      get: jest.fn((keys: string | string[] | null) =>
+        Promise.resolve(
+          keys === null
+            ? sessionStore
+            : Array.isArray(keys)
+            ? Object.fromEntries(keys.map(k => [k, sessionStore[k]]))
+            : { [keys as string]: sessionStore[keys as string] }
+        )
+      ),
+      set: jest.fn((items: Record<string, unknown>) => {
+        Object.assign(sessionStore, items)
+        return Promise.resolve()
+      }),
+      remove: jest.fn((keys: string | string[]) => {
+        const ks = Array.isArray(keys) ? keys : [keys]
+        ks.forEach(k => delete sessionStore[k])
+        return Promise.resolve()
+      }),
     },
   },
   runtime: {
@@ -60,5 +76,6 @@ global.chrome = {
 // Reset store before each test
 beforeEach(() => {
   Object.keys(store).forEach(k => delete store[k])
+  Object.keys(sessionStore).forEach(k => delete sessionStore[k])
   jest.clearAllMocks()
 })
