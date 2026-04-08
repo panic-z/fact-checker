@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom'
 import { webcrypto } from 'crypto'
 import { TextEncoder, TextDecoder } from 'util'
+import { ReadableStream, TransformStream, WritableStream } from 'stream/web'
 
 // Polyfill Web Crypto API for jsdom (not available by default)
 Object.defineProperty(globalThis, 'crypto', {
@@ -11,6 +12,21 @@ Object.defineProperty(globalThis, 'crypto', {
 
 // Polyfill TextEncoder/TextDecoder for jsdom
 Object.assign(global, { TextEncoder, TextDecoder })
+
+// Polyfill Web Streams API and fetch globals for jsdom using Node built-ins
+if (!global.ReadableStream) {
+  Object.assign(global, { ReadableStream, TransformStream, WritableStream })
+}
+if (!(global as Record<string, unknown>).Response) {
+  // Node 18+ has these as globals; expose them for jsdom test environment
+  const nodeGlobals = globalThis as Record<string, unknown>
+  const toPolyfill: string[] = ['Response', 'Request', 'Headers', 'fetch']
+  for (const name of toPolyfill) {
+    if (!(global as Record<string, unknown>)[name] && nodeGlobals[name]) {
+      ;(global as Record<string, unknown>)[name] = nodeGlobals[name]
+    }
+  }
+}
 
 // Mock chrome.storage
 const store: Record<string, unknown> = {}
