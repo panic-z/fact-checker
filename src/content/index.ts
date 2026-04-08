@@ -1,0 +1,2 @@
+// content script placeholder
+export {}

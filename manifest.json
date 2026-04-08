@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Fact Checker",
+  "version": "1.0.0",
+  "description": "Summarize and fact-check YouTube/Bilibili videos",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "*://www.youtube.com/*",
+    "*://www.bilibili.com/*",
+    "*://api.anthropic.com/*",
+    "*://api.openai.com/*",
+    "*://timedtext.youtube.com/*",
+    "*://api.bilibili.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.youtube.com/watch*",
+        "*://www.bilibili.com/video/*"
+      ],
+      "js": ["src/content/index.ts"],
+      "css": ["src/content/sidebar.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "src/options/index.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
