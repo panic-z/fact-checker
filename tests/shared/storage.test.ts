@@ -1,6 +1,7 @@
 // tests/shared/storage.test.ts
-import { saveSettings, getSettings, encryptValue, decryptValue } from '../../src/shared/storage'
+import { saveSettings, getSettings, encryptValue, decryptValue, getCachedTranscript, setCachedTranscript } from '../../src/shared/storage'
 import type { Settings } from '../../src/shared/types'
+import type { Transcript } from '../../src/shared/types'
 
 describe('storage', () => {
   describe('encryption', () => {
@@ -50,6 +51,34 @@ describe('storage', () => {
       const loaded = await getSettings()
       expect(loaded.claudeModel).toBe('claude-opus-4-6')
       expect(loaded.openaiModel).toBe('gpt-4o-mini')
+    })
+  })
+
+  describe('transcript cache', () => {
+    it('returns null for uncached video', async () => {
+      const result = await getCachedTranscript('abc123')
+      expect(result).toBeNull()
+    })
+
+    it('caches and retrieves a transcript', async () => {
+      const transcript: Transcript = {
+        videoId: 'abc123',
+        platform: 'youtube',
+        language: 'en',
+        segments: [],
+        fullText: 'hello world',
+      }
+      await setCachedTranscript('abc123', transcript)
+      const result = await getCachedTranscript('abc123')
+      expect(result).toEqual(transcript)
+    })
+
+    it('isolates transcripts by videoId', async () => {
+      await setCachedTranscript('vid1', {
+        videoId: 'vid1', platform: 'youtube', language: 'en', segments: [], fullText: 'a'
+      })
+      const result = await getCachedTranscript('vid2')
+      expect(result).toBeNull()
     })
   })
 })

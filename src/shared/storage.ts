@@ -4,6 +4,14 @@ const STORAGE_KEY_PREFIX = 'fc_'
 const CRYPTO_KEY_STORAGE_KEY = `${STORAGE_KEY_PREFIX}crypto_key`
 const SETTINGS_STORAGE_KEY = `${STORAGE_KEY_PREFIX}settings`
 
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = ''
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+}
+
 // --- AES-GCM encryption ---
 
 async function getOrCreateCryptoKey(): Promise<CryptoKey> {
@@ -17,7 +25,7 @@ async function getOrCreateCryptoKey(): Promise<CryptoKey> {
   }
   const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt'])
   const exported = await crypto.subtle.exportKey('raw', key)
-  const b64 = btoa(String.fromCharCode(...new Uint8Array(exported)))
+  const b64 = uint8ToBase64(new Uint8Array(exported))
   await chrome.storage.local.set({ [CRYPTO_KEY_STORAGE_KEY]: b64 })
   return key
 }
@@ -30,7 +38,7 @@ export async function encryptValue(plaintext: string): Promise<string> {
   const combined = new Uint8Array(iv.length + encrypted.byteLength)
   combined.set(iv)
   combined.set(new Uint8Array(encrypted), iv.length)
-  return btoa(String.fromCharCode(...combined))
+  return uint8ToBase64(combined)
 }
 
 export async function decryptValue(ciphertext: string): Promise<string> {
