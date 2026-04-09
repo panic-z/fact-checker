@@ -9,6 +9,7 @@
     "*://www.bilibili.com/*",
     "*://api.anthropic.com/*",
     "*://api.openai.com/*",
+    "*://openrouter.ai/*",
     "*://timedtext.youtube.com/*",
     "*://api.bilibili.com/*"
   ],

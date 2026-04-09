@@ -22,6 +22,7 @@ export const en: Record<I18nKey, string> = {
   settingsSaved: 'Settings saved!',
   claudeApiKey: 'Claude API Key',
   openaiApiKey: 'OpenAI API Key',
+  openrouterApiKey: 'OpenRouter API Key',
   defaultProvider: 'Default AI Provider',
   defaultLanguage: 'Default Output Language',
   model: 'Model',

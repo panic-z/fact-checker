@@ -55,8 +55,10 @@ export async function decryptValue(ciphertext: string): Promise<string> {
 interface StoredSettings {
   claudeApiKeyEnc?: string
   openaiApiKeyEnc?: string
+  openrouterApiKeyEnc?: string
   claudeModel?: string
   openaiModel?: string
+  openrouterModel?: string
   defaultProvider?: string
   defaultLanguage?: string
 }
@@ -67,12 +69,15 @@ export async function getSettings(): Promise<Settings> {
 
   const claudeApiKey = raw.claudeApiKeyEnc ? await decryptValue(raw.claudeApiKeyEnc) : ''
   const openaiApiKey = raw.openaiApiKeyEnc ? await decryptValue(raw.openaiApiKeyEnc) : ''
+  const openrouterApiKey = raw.openrouterApiKeyEnc ? await decryptValue(raw.openrouterApiKeyEnc) : ''
 
   return {
     claudeApiKey,
     openaiApiKey,
+    openrouterApiKey,
     claudeModel: raw.claudeModel ?? DEFAULT_SETTINGS.claudeModel,
     openaiModel: raw.openaiModel ?? DEFAULT_SETTINGS.openaiModel,
+    openrouterModel: raw.openrouterModel ?? DEFAULT_SETTINGS.openrouterModel,
     defaultProvider: (raw.defaultProvider as Settings['defaultProvider']) ?? DEFAULT_SETTINGS.defaultProvider,
     defaultLanguage: (raw.defaultLanguage as Settings['defaultLanguage']) ?? DEFAULT_SETTINGS.defaultLanguage,
   }
@@ -90,8 +95,12 @@ export async function saveSettings(partial: Partial<Settings>): Promise<void> {
   if (partial.openaiApiKey !== undefined) {
     updated.openaiApiKeyEnc = partial.openaiApiKey ? await encryptValue(partial.openaiApiKey) : ''
   }
+  if (partial.openrouterApiKey !== undefined) {
+    updated.openrouterApiKeyEnc = partial.openrouterApiKey ? await encryptValue(partial.openrouterApiKey) : ''
+  }
   if (partial.claudeModel !== undefined) updated.claudeModel = partial.claudeModel
   if (partial.openaiModel !== undefined) updated.openaiModel = partial.openaiModel
+  if (partial.openrouterModel !== undefined) updated.openrouterModel = partial.openrouterModel
   if (partial.defaultProvider !== undefined) updated.defaultProvider = partial.defaultProvider
   if (partial.defaultLanguage !== undefined) updated.defaultLanguage = partial.defaultLanguage
 

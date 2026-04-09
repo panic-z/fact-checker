@@ -9,6 +9,8 @@ describe('shared types', () => {
       claudeModel: 'claude-sonnet-4-6',
       openaiApiKey: 'sk-test',
       openaiModel: 'gpt-4o',
+      openrouterApiKey: 'sk-or-test',
+      openrouterModel: 'openai/gpt-4o',
       defaultProvider: 'claude',
       defaultLanguage: 'zh',
     }
