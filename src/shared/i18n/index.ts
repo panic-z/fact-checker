@@ -1,4 +1,5 @@
 import { zh, type I18nKey } from './zh'
+export type { I18nKey }
 import { en } from './en'
 
 type SupportedLanguage = 'zh' | 'en'

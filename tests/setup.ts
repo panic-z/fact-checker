@@ -95,3 +95,7 @@ beforeEach(() => {
   Object.keys(sessionStore).forEach(k => delete sessionStore[k])
   jest.clearAllMocks()
 })
+
+// Set i18n language to English for tests so UI text matches English assertions
+import { setLanguage } from '../src/shared/i18n'
+setLanguage('en')
