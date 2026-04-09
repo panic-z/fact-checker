@@ -78,17 +78,43 @@ export function Options() {
           </label>
         </fieldset>
 
+        <fieldset style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, marginBottom: 16 }}>
+          <legend style={{ fontWeight: 600, padding: '0 8px' }}>OpenRouter</legend>
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 13 }}>
+            {t('openrouterApiKey')}
+            <input
+              aria-label={t('openrouterApiKey')}
+              type="password"
+              value={settings.openrouterApiKey}
+              onChange={e => setSettings({ ...settings, openrouterApiKey: e.target.value })}
+              placeholder="sk-or-..."
+              style={{ display: 'block', width: '100%', marginTop: 4, padding: '7px 10px', border: '1px solid #d1d5db', borderRadius: 4, fontSize: 13, boxSizing: 'border-box' }}
+            />
+          </label>
+          <label style={{ display: 'block', fontSize: 13 }}>
+            {t('model')}
+            <input
+              type="text"
+              value={settings.openrouterModel}
+              onChange={e => setSettings({ ...settings, openrouterModel: e.target.value })}
+              placeholder="e.g. openai/gpt-4o, anthropic/claude-sonnet-4-5"
+              style={{ display: 'block', width: '100%', marginTop: 4, padding: '7px 10px', border: '1px solid #d1d5db', borderRadius: 4, fontSize: 13, boxSizing: 'border-box' }}
+            />
+          </label>
+        </fieldset>
+
         <fieldset style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, marginBottom: 24 }}>
           <legend style={{ fontWeight: 600, padding: '0 8px' }}>Preferences</legend>
           <label style={{ display: 'block', marginBottom: 12, fontSize: 13 }}>
             {t('defaultProvider')}
             <select
               value={settings.defaultProvider}
-              onChange={e => setSettings({ ...settings, defaultProvider: e.target.value as 'claude' | 'openai' })}
+              onChange={e => setSettings({ ...settings, defaultProvider: e.target.value as 'claude' | 'openai' | 'openrouter' })}
               style={{ display: 'block', width: '100%', marginTop: 4, padding: '7px 10px', border: '1px solid #d1d5db', borderRadius: 4, fontSize: 13 }}
             >
               <option value="claude">Claude (Anthropic)</option>
               <option value="openai">OpenAI</option>
+              <option value="openrouter">OpenRouter</option>
             </select>
           </label>
           <label style={{ display: 'block', fontSize: 13 }}>

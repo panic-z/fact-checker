@@ -1,5 +1,5 @@
 export type Language = 'zh' | 'en' | 'auto'
-export type AIProvider = 'claude' | 'openai'
+export type AIProvider = 'claude' | 'openai' | 'openrouter'
 export type AnalysisType = 'summary' | 'factcheck'
 export type AnalysisStatus = 'idle' | 'loading' | 'streaming' | 'done' | 'error'
 
@@ -8,6 +8,8 @@ export interface Settings {
   claudeModel: string
   openaiApiKey: string
   openaiModel: string
+  openrouterApiKey: string
+  openrouterModel: string
   defaultProvider: AIProvider
   defaultLanguage: Language
 }
@@ -17,6 +19,8 @@ export const DEFAULT_SETTINGS: Settings = {
   claudeModel: 'claude-sonnet-4-6',
   openaiApiKey: '',
   openaiModel: 'gpt-4o',
+  openrouterApiKey: '',
+  openrouterModel: 'openai/gpt-4o',
   defaultProvider: 'claude',
   defaultLanguage: 'zh',
 }

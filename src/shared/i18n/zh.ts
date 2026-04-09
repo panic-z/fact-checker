@@ -20,6 +20,7 @@ export const zh = {
   settingsSaved: '设置已保存',
   claudeApiKey: 'Claude API Key',
   openaiApiKey: 'OpenAI API Key',
+  openrouterApiKey: 'OpenRouter API Key',
   defaultProvider: '默认 AI 提供商',
   defaultLanguage: '默认输出语言',
   model: '模型',
