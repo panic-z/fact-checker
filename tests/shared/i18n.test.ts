@@ -26,7 +26,7 @@ describe('i18n', () => {
   it('supports all required keys in both languages', () => {
     const keys: string[] = [
       'startAnalysis', 'summary', 'factCheck', 'loading',
-      'noSubtitles', 'whisperPrompt', 'whisperConfirm', 'whisperCancel',
+      'noSubtitles',
       'copyResult', 'copied', 'settings', 'openPanel', 'closePanel',
       'noIssuesFound', 'errorInvalidKey', 'errorQuotaExceeded', 'errorNetwork',
       'saveSettings', 'settingsSaved', 'claudeApiKey', 'openaiApiKey',

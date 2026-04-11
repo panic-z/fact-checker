@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Popup } from '../../src/popup/Popup'
 
 beforeEach(() => {
-  ;(chrome.tabs.query as jest.Mock).mockResolvedValue([{ id: 1, url: 'https://www.youtube.com/watch?v=abc' }])
+  ;(chrome.tabs.query as jest.Mock).mockResolvedValue([{ id: 1, url: 'https://www.bilibili.com/video/BV1abc' }])
   ;(chrome.tabs.sendMessage as jest.Mock).mockResolvedValue({})
 })
 
@@ -26,7 +26,7 @@ describe('Popup', () => {
     ;(chrome.tabs.query as jest.Mock).mockResolvedValue([{ id: 2, url: 'https://google.com' }])
     render(<Popup />)
     await waitFor(() => {
-      expect(screen.getByText(/youtube or bilibili/i)).toBeInTheDocument()
+      expect(screen.getByText(/bilibili video page/i)).toBeInTheDocument()
     })
   })
 })

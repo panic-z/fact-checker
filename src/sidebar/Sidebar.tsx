@@ -41,6 +41,14 @@ export function Sidebar({ onClose, onAnalyze }: Props) {
             EN
           </button>
         </div>
+        <button
+          className="fc-settings-btn"
+          onClick={() => chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' })}
+          aria-label={t('settings')}
+          title={t('settings')}
+        >
+          ⚙
+        </button>
         <button className="fc-close-btn" onClick={onClose} aria-label="Close">×</button>
       </div>
 
@@ -67,13 +75,11 @@ export function Sidebar({ onClose, onAnalyze }: Props) {
         <SummaryTab
           language={language}
           onAnalyze={lang => onAnalyze('summary', lang)}
-          onWhisperConfirm={lang => onAnalyze('summary', lang)}
         />
       ) : (
         <FactCheckTab
           language={language}
           onAnalyze={lang => onAnalyze('factcheck', lang)}
-          onWhisperConfirm={lang => onAnalyze('factcheck', lang)}
         />
       )}
     </div>

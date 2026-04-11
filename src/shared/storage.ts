@@ -111,11 +111,20 @@ export async function saveSettings(partial: Partial<Settings>): Promise<void> {
 
 export async function getCachedTranscript(videoId: string): Promise<Transcript | null> {
   const key = `${STORAGE_KEY_PREFIX}transcript_${videoId}`
-  const stored = await chrome.storage.session.get(key)
-  return (stored[key] as Transcript) ?? null
+  try {
+    const stored = await chrome.storage.session.get(key)
+    return (stored[key] as Transcript) ?? null
+  } catch {
+    // Session storage may be inaccessible from content scripts; treat as cache miss
+    return null
+  }
 }
 
 export async function setCachedTranscript(videoId: string, transcript: Transcript): Promise<void> {
   const key = `${STORAGE_KEY_PREFIX}transcript_${videoId}`
-  await chrome.storage.session.set({ [key]: transcript })
+  try {
+    await chrome.storage.session.set({ [key]: transcript })
+  } catch {
+    // Session storage may be inaccessible from content scripts; skip caching
+  }
 }

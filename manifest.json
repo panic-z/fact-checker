@@ -5,26 +5,23 @@
   "description": "Summarize and fact-check YouTube/Bilibili videos",
   "permissions": ["storage", "tabs"],
   "host_permissions": [
-    "*://www.youtube.com/*",
     "*://www.bilibili.com/*",
+    "*://api.bilibili.com/*",
+    "*://aisubtitle.hdslb.com/*",
     "*://api.anthropic.com/*",
     "*://api.openai.com/*",
-    "*://openrouter.ai/*",
-    "*://timedtext.youtube.com/*",
-    "*://api.bilibili.com/*"
+    "*://openrouter.ai/*"
   ],
   "background": {
-    "service_worker": "src/background/index.ts",
+    "service_worker": "src/background/sw.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": [
-        "*://www.youtube.com/watch*",
         "*://www.bilibili.com/video/*"
       ],
       "js": ["src/content/index.ts"],
-      "css": ["src/content/sidebar.css"],
       "run_at": "document_idle"
     }
   ],

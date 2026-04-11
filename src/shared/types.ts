@@ -1,7 +1,7 @@
 export type Language = 'zh' | 'en' | 'auto'
 export type AIProvider = 'claude' | 'openai' | 'openrouter'
 export type AnalysisType = 'summary' | 'factcheck'
-export type AnalysisStatus = 'idle' | 'loading' | 'streaming' | 'done' | 'error'
+export type AnalysisStatus = 'idle' | 'loading' | 'thinking' | 'streaming' | 'done' | 'error'
 
 export interface Settings {
   claudeApiKey: string
@@ -33,7 +33,7 @@ export interface TranscriptSegment {
 
 export interface Transcript {
   videoId: string
-  platform: 'youtube' | 'bilibili'
+  platform: 'bilibili'
   language: string
   segments: TranscriptSegment[]
   fullText: string

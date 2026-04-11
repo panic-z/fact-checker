@@ -3,10 +3,10 @@ export const zh = {
   summary: '视频总结',
   factCheck: '事实核查',
   loading: '分析中...',
+  loadingTranscript: '正在获取字幕...',
+  loadingThinking: 'AI 思考中...',
+  streamingLabel: '生成中...',
   noSubtitles: '该视频暂无字幕',
-  whisperPrompt: '该视频暂无字幕，是否使用 Whisper 语音识别？（将消耗你的 OpenAI API 额度）',
-  whisperConfirm: '使用 Whisper',
-  whisperCancel: '取消',
   copyResult: '复制结果',
   copied: '已复制',
   settings: '设置',
@@ -24,7 +24,7 @@ export const zh = {
   defaultProvider: '默认 AI 提供商',
   defaultLanguage: '默认输出语言',
   model: '模型',
-  notVideoPage: '请在 YouTube 或 Bilibili 视频页使用',
+  notVideoPage: '请在 Bilibili 视频页使用',
   language: '语言',
 } as const
 

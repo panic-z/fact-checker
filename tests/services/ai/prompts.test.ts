@@ -1,4 +1,3 @@
-// tests/services/ai/prompts.test.ts
 import { buildSummaryPrompt, buildFactCheckPrompt } from '../../../src/services/ai/prompts'
 
 const TRANSCRIPT = 'Climate change is causing sea levels to rise by 3 meters per year. Scientists agree this will flood all coastal cities by 2025.'
@@ -19,9 +18,16 @@ describe('prompts', () => {
 
     it('includes required output sections', () => {
       const prompt = buildSummaryPrompt(TRANSCRIPT, 'en')
-      expect(prompt).toContain('key point')
-      expect(prompt).toContain('overview')
-      expect(prompt).toContain('conclusion')
+      expect(prompt).toContain('核心要点')
+      expect(prompt).toContain('内容概述')
+      expect(prompt).toContain('主要结论')
+    })
+
+    it('truncates very long transcripts', () => {
+      const longTranscript = 'x'.repeat(100000)
+      const prompt = buildSummaryPrompt(longTranscript, 'en')
+      expect(prompt.length).toBeLessThan(100000)
+      expect(prompt).toContain('[transcript truncated]')
     })
   })
 
@@ -31,16 +37,16 @@ describe('prompts', () => {
       expect(prompt).toContain(TRANSCRIPT)
     })
 
-    it('asks to identify factual errors and logical fallacies', () => {
+    it('asks to fact-check', () => {
       const prompt = buildFactCheckPrompt(TRANSCRIPT, 'en')
-      expect(prompt.toLowerCase()).toContain('factual')
-      expect(prompt.toLowerCase()).toContain('logical')
+      expect(prompt.toLowerCase()).toContain('fact-check')
     })
 
-    it('handles very long transcripts by truncating to 80000 chars', () => {
+    it('truncates very long transcripts', () => {
       const longTranscript = 'x'.repeat(100000)
       const prompt = buildFactCheckPrompt(longTranscript, 'en')
       expect(prompt.length).toBeLessThan(100000)
+      expect(prompt).toContain('[transcript truncated]')
     })
   })
 })

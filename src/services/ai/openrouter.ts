@@ -5,12 +5,14 @@ export async function* streamOpenRouter(
   model: string,
   prompt: string
 ): AsyncGenerator<string> {
+  console.log('[FactChecker/openrouter] request', { model, keyLen: apiKey.length, keyPrefix: apiKey.slice(0, 10) })
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
       'HTTP-Referer': 'https://github.com/fact-checker-extension',
+      'X-Title': 'Fact Checker',
     },
     body: JSON.stringify({
       model,
@@ -18,9 +20,12 @@ export async function* streamOpenRouter(
       messages: [{ role: 'user', content: prompt }],
     }),
   })
+  console.log('[FactChecker/openrouter] response status', response.status)
 
   if (!response.ok) {
-    throw new ApiError(classifyApiError(response.status), `OpenRouter API error: ${response.status}`)
+    const bodyText = await response.text().catch(() => '<unreadable>')
+    console.error('[FactChecker/openrouter] error body:', bodyText)
+    throw new ApiError(classifyApiError(response.status), `OpenRouter API error: ${response.status} ${bodyText.slice(0, 200)}`)
   }
 
   const reader = response.body?.getReader()
@@ -28,10 +33,18 @@ export async function* streamOpenRouter(
 
   const decoder = new TextDecoder()
   let buffer = ''
+  let sawFirstByte = false
+  let sawFirstContent = false
+  let reasoningOpen = false
 
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
+
+    if (!sawFirstByte) {
+      sawFirstByte = true
+      console.log('[FactChecker/openrouter] first bytes received')
+    }
 
     buffer += decoder.decode(value, { stream: true })
     const lines = buffer.split('\n')
@@ -44,10 +57,29 @@ export async function* streamOpenRouter(
 
       try {
         const event = JSON.parse(data) as {
-          choices: Array<{ delta: { content?: string } }>
+          choices: Array<{ delta: { content?: string; reasoning?: string } }>
         }
-        const text = event.choices?.[0]?.delta?.content
-        if (text) yield text
+        const delta = event.choices?.[0]?.delta
+        const reasoning = delta?.reasoning
+        const text = delta?.content
+        if (reasoning) {
+          if (!reasoningOpen) {
+            reasoningOpen = true
+            yield '%%REASONING_START%%'
+          }
+          yield reasoning
+        }
+        if (text) {
+          if (reasoningOpen) {
+            reasoningOpen = false
+            yield '%%REASONING_END%%'
+          }
+          if (!sawFirstContent) {
+            sawFirstContent = true
+            console.log('[FactChecker/openrouter] first content token')
+          }
+          yield text
+        }
       } catch {
         // skip malformed SSE lines
       }

@@ -63,7 +63,7 @@ describe('storage', () => {
     it('caches and retrieves a transcript', async () => {
       const transcript: Transcript = {
         videoId: 'abc123',
-        platform: 'youtube',
+        platform: 'bilibili',
         language: 'en',
         segments: [],
         fullText: 'hello world',
@@ -75,7 +75,7 @@ describe('storage', () => {
 
     it('isolates transcripts by videoId', async () => {
       await setCachedTranscript('vid1', {
-        videoId: 'vid1', platform: 'youtube', language: 'en', segments: [], fullText: 'a'
+        videoId: 'vid1', platform: 'bilibili', language: 'en', segments: [], fullText: 'a'
       })
       const result = await getCachedTranscript('vid2')
       expect(result).toBeNull()
