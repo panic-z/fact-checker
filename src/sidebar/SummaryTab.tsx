@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
 import { t, type I18nKey } from '../shared/i18n'
+import { Markdown } from './Markdown'
 import type { AnalysisStatus, Language } from '../shared/types'
 import type { ContentMessage } from '../shared/messages'
 
 interface Props {
   language: Language
   onAnalyze: (lang: Language) => Promise<'ok' | 'noSubtitles'>
-  onWhisperConfirm: (lang: Language) => void
 }
 
-export function SummaryTab({ language, onAnalyze, onWhisperConfirm }: Props) {
+export function SummaryTab({ language, onAnalyze }: Props) {
   const [status, setStatus] = useState<AnalysisStatus>('idle')
   const [result, setResult] = useState('')
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
-  const [showWhisperPrompt, setShowWhisperPrompt] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+  const [startedAt, setStartedAt] = useState<number | null>(null)
 
   useEffect(() => {
     const handler = (msg: ContentMessage) => {
@@ -23,8 +24,10 @@ export function SummaryTab({ language, onAnalyze, onWhisperConfirm }: Props) {
         setResult(prev => prev + msg.chunk)
       } else if (msg.type === 'ANALYSIS_DONE' && msg.analysisType === 'summary') {
         setStatus('done')
+        setStartedAt(null)
       } else if (msg.type === 'ANALYSIS_ERROR' && msg.analysisType === 'summary') {
         setStatus('error')
+        setStartedAt(null)
         const errorKey = `error${msg.error.charAt(0).toUpperCase() + msg.error.slice(1)}` as I18nKey
         setError(t(errorKey) ?? t('errorNetwork'))
       }
@@ -33,16 +36,26 @@ export function SummaryTab({ language, onAnalyze, onWhisperConfirm }: Props) {
     return () => chrome.runtime.onMessage.removeListener(handler)
   }, [])
 
+  useEffect(() => {
+    if (startedAt === null) return
+    const id = setInterval(() => setElapsed(Math.floor((Date.now() - startedAt) / 1000)), 250)
+    return () => clearInterval(id)
+  }, [startedAt])
+
   async function startAnalysis() {
     setStatus('loading')
     setResult('')
     setError('')
-    setShowWhisperPrompt(false)
+    setElapsed(0)
+    setStartedAt(Date.now())
 
     const outcome = await onAnalyze(language)
     if (outcome === 'noSubtitles') {
-      setShowWhisperPrompt(true)
-      setStatus('idle')
+      setStatus('error')
+      setError(t('noSubtitles'))
+      setStartedAt(null)
+    } else {
+      setStatus('thinking')
     }
   }
 
@@ -53,33 +66,22 @@ export function SummaryTab({ language, onAnalyze, onWhisperConfirm }: Props) {
     })
   }
 
-  const isRunning = status === 'loading' || status === 'streaming'
+  const isRunning = status === 'loading' || status === 'thinking' || status === 'streaming'
+  const buttonLabel =
+    status === 'loading' ? t('loadingTranscript') :
+    status === 'thinking' ? `${t('loadingThinking')} ${elapsed}s` :
+    status === 'streaming' ? `${t('streamingLabel')} ${elapsed}s` :
+    t('startAnalysis')
 
   return (
     <div className="fc-tab-content">
-      {showWhisperPrompt && (
-        <div className="fc-whisper-prompt">
-          <p>{t('whisperPrompt')}</p>
-          <div className="fc-whisper-actions">
-            <button className="fc-whisper-confirm" onClick={() => {
-              setShowWhisperPrompt(false)
-              onWhisperConfirm(language)
-            }}>
-              {t('whisperConfirm')}
-            </button>
-            <button className="fc-whisper-cancel" onClick={() => setShowWhisperPrompt(false)}>
-              {t('whisperCancel')}
-            </button>
-          </div>
-        </div>
-      )}
       <button className="fc-analyze-btn" onClick={startAnalysis} disabled={isRunning}>
-        {isRunning ? t('loading') : t('startAnalysis')}
+        {buttonLabel}
       </button>
       {status === 'error' && <div className="fc-error">{error}</div>}
       {result && (
         <>
-          <div className="fc-result">{result}</div>
+          <div className="fc-result"><Markdown text={result} /></div>
           <button className="fc-copy-btn" onClick={copyResult}>
             {copied ? t('copied') : t('copyResult')}
           </button>

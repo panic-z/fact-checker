@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { t } from '../shared/i18n'
 
-type PageType = 'youtube' | 'bilibili' | 'other' | 'loading'
+type PageType = 'bilibili' | 'other' | 'loading'
 
 function detectPageType(url: string): PageType {
-  if (url.includes('youtube.com/watch')) return 'youtube'
   if (url.includes('bilibili.com/video/')) return 'bilibili'
   return 'other'
 }
@@ -33,7 +32,7 @@ export function Popup() {
     <div style={{ width: 240, padding: 16, fontFamily: 'system-ui, sans-serif' }}>
       <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>Fact Checker</h3>
       {pageType === 'loading' && <p style={{ color: '#6b7280', fontSize: 13 }}>Loading…</p>}
-      {(pageType === 'youtube' || pageType === 'bilibili') && (
+      {pageType === 'bilibili' && (
         <button
           onClick={openPanel}
           style={{

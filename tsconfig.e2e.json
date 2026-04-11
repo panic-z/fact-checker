@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "chrome"],
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "module": "CommonJS",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["e2e", "playwright.config.ts"]
+}

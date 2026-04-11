@@ -20,9 +20,9 @@ describe('shared types', () => {
   it('Transcript has correct structure', () => {
     const segment: TranscriptSegment = { text: 'Hello', startMs: 0, durationMs: 1000 }
     const transcript: Transcript = {
-      videoId: 'abc123',
-      platform: 'youtube',
-      language: 'en',
+      videoId: 'BV1abc',
+      platform: 'bilibili',
+      language: 'zh-CN',
       segments: [segment],
       fullText: 'Hello',
     }
